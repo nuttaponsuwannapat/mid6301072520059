@@ -1,0 +1,127 @@
+import cv2 
+import numpy as np
+import matplotlib.pyplot as plt
+
+#import image
+img = cv2.imread("med.jpg")
+img1 = cv2.imread("black.jpg")
+img = cv2.resize(img,(600,600))
+img1 = cv2.resize(img1,(600,40))
+
+B1 = cv2.resize(img1,(250,40))
+B2 = cv2.resize(img1,(200,40))
+B3 = cv2.resize(img1,(225,40))
+B4 = cv2.resize(img1,(175,40))
+B5 = cv2.resize(img1,(225,40))
+
+
+#delete noise
+blur = cv2.GaussianBlur(img, (15,15), 0)
+
+#yellow
+lower_1 = np.array([44,98,98])
+upper_1 = np.array([87,224,240])
+mask = cv2.inRange(blur, lower_1, upper_1)
+color1 = cv2.bitwise_and(blur,blur,mask=mask)
+#blue
+lower_2 = np.array([158,64,27])
+upper_2 = np.array([205,175,131])
+mask = cv2.inRange(blur, lower_2, upper_2)
+color2 = cv2.bitwise_and(blur,blur,mask=mask)
+#black
+lower_3 = np.array([41,37,36])
+upper_3 = np.array([105,105,105])
+mask = cv2.inRange(blur, lower_3, upper_3)
+color3 = cv2.bitwise_and(blur,blur,mask=mask)
+#pink
+lower_4 = np.array([69,101,181])
+upper_4 = np.array([188,171,251])
+mask = cv2.inRange(blur, lower_4, upper_4)
+color4 = cv2.bitwise_and(blur,blur,mask=mask)
+#cream
+lower_5 = np.array([95,171,192])
+upper_5 = np.array([174,183,234])
+mask = cv2.inRange(blur, lower_5, upper_5)
+color5 = cv2.bitwise_and(blur,blur,mask=mask)
+
+#Crop
+#1 yellow
+crop_yellow1 = color1[184:53+184, 370:68+370] # Crop จาก x, y, w, h คือ img[y: h + y, x: w + x]
+y1 = cv2.resize(crop_yellow1,(50,40))
+crop_yellow2 = color1[228:42+228, 450:73+450]
+y2 = cv2.resize(crop_yellow2,(50,40))
+#2 blue
+crop_blue1 = color2[368:45+368, 235:18+235]
+b1 = cv2.resize(crop_blue1,(50,40))
+crop_blue2 = color2[285:35+285, 178:27+178]
+b2 = cv2.resize(crop_blue2,(50,40))
+crop_blue3 = color2[204:25+204, 129:30+129]
+b3 = cv2.resize(crop_blue3,(50,40))
+crop_blue4 = color2[122:35+122, 182:20+182]
+b4 = cv2.resize(crop_blue4,(50,40))
+#3 black
+crop_black1 = color3[329:60+329, 95:50+95]
+bk1 = cv2.resize(crop_black1,(50,40))
+crop_black2 = color3[281:55+281, 218:50+218]
+bk2 = cv2.resize(crop_black2,(50,40))
+crop_black3 = color3[181:35+181, 313:50+313]
+bk3 = cv2.resize(crop_black3,(50,40))
+#4 pink
+crop_pink1 = color4[172:35+172, 66:30+66]
+p1 = cv2.resize(crop_pink1,(50,40))
+crop_pink2 = color4[229:38+229, 199:28+199]
+p2 = cv2.resize(crop_pink2,(50,40))
+crop_pink3 = color4[464:42+464, 118:35+118]
+p3 = cv2.resize(crop_pink3,(50,40))
+crop_pink4 = color4[368:33+368, 348:28+348]
+p4 = cv2.resize(crop_pink4,(50,40))
+crop_pink5 = color4[423:40+423, 347:28+347]
+p5 = cv2.resize(crop_pink5,(50,40))
+#5 cream
+crop_cream1 = color5[143:48+143, 117:42+117]
+c1 = cv2.resize(crop_cream1,(50,40))
+crop_cream2 = color5[256:52+256, 368:42+368]
+c2 = cv2.resize(crop_cream2,(50,40))
+crop_cream3 = color5[327:60+327, 458:36+458]
+c3 = cv2.resize(crop_cream3,(50,40))
+
+# นำภาพมาเรียงกันในแนวนอน
+med1 = np.hstack((B1,y1,y2,B1)) 
+med2 = np.hstack((B2,b1,b2,b3,b4,B2))
+med3 = np.hstack((B3,bk1,bk2,bk3,B3))
+med4 = np.hstack((B4,p1,p2,p3,p4,p5,B4))
+med5 = np.hstack((B5,c1,c2,c3,B5))
+# นำภาพมาเรียงกันในแนวตั้ง
+Final = np.vstack((img1,med1,img1,med3,img1,med5,img1,med2,img1,med4,img1))
+
+cv2.putText(Final,"Yellow  = 2",(10,65),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,255,255),2) #(ชื่อตัวแปร,"ข้อความ",(ตำแหน่ง(x,y)),ฟ้อน,ขนาดข้อความ,(ค่าสี(B,G,R)), ความหนาเส้น)
+cv2.putText(Final,"Blavk = 3",(10,145),cv2.FONT_HERSHEY_SIMPLEX,0.7,(192,192,192),2)
+cv2.putText(Final,"Cream = 3",(10,225),cv2.FONT_HERSHEY_SIMPLEX,0.7,(153,204,255),2)
+cv2.putText(Final,"Blue   = 4",(10,305),cv2.FONT_HERSHEY_SIMPLEX,0.7,(204,204,0),2)
+cv2.putText(Final,"Pink   = 5",(10,385),cv2.FONT_HERSHEY_SIMPLEX,0.7,(178,102,255),2)
+
+
+#show
+#cv2.imshow("org",blur)
+#cv2.imshow("1 yellow",color1)
+#cv2.imshow("2 blue",color2)
+#cv2.imshow("3 black",color3)
+#cv2.imshow("4 pink",color4)
+#cv2.imshow("5 cream",color5)
+#cv2.imshow("Yellow",med1)
+#cv2.imshow("Blue",med2)
+#cv2.imshow("Black",med3)
+#cv2.imshow("Pink",med4)
+#cv2.imshow("Cream",med5)
+#cv2.imshow("img1",img1)
+cv2.imshow("Final",Final)
+
+#plt.subplot(121),plt.imshow(img)
+plt.subplot(122),plt.imshow(Final)
+plt.subplot(121),plt.imshow(blur)
+plt.show()
+
+
+#close window
+cv2.waitKey(0)
+cv2.destroyAllWindows
